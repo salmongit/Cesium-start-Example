@@ -34,9 +34,20 @@
         </div>
         <br>
         <div class="nowrap">
-            案例来源自cesium官方 <a href="https://sandcastle.cesium.com/?src=3D%20Tiles%20Clipping%20Planes.html" target="_blank">3D Tiles Clipping Planes</a>
-        </div>        
+            目标：想让被剖切掉的部分透明
+        </div>
         <br>
+        <div class="nowrap">
+            <input id="Cesium3DTileset" name="model" type="radio" checked />
+            <label for="Cesium3DTileset">Cesium3DTileset(求助)</label>
+            <input id="Model" name="model" type="radio" />
+            <label for="Model">Model(OK)</label>
+        </div>
+        <br>
+        <div class="nowrap">
+            案例来源自cesium官方 <a href="https://sandcastle.cesium.com/?src=3D%20Tiles%20Clipping%20Planes.html"
+                target="_blank">3D Tiles Clipping Planes</a>
+        </div>
         <br>
         <div class="nowrap">
             Cesium版本：<label id="cesium-version"></label>
@@ -109,6 +120,63 @@
             };
         }
 
+
+        var tileset;
+
+        function loadTileset(url) {
+            clippingPlanes = new Cesium.ClippingPlaneCollection({
+                planes: [
+                    new Cesium.ClippingPlane(new Cesium.Cartesian3(0.0, 0.0, -1.0), 0.0)
+                ],
+                edgeWidth: viewModel.edgeStylingEnabled ? 1.0 : 0.0
+            });
+
+            tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+                url: url,
+                clippingPlanes: clippingPlanes
+            }));
+
+            tileset.debugShowBoundingVolume = viewModel.debugBoundingVolumesEnabled;
+            return tileset.readyPromise.then(function () {
+                var boundingSphere = tileset.boundingSphere;
+                var radius = boundingSphere.radius;
+
+                viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0.5, -0.2, radius * 4.0));
+
+                if (!Cesium.Matrix4.equals(tileset.root.transform, Cesium.Matrix4.IDENTITY)) {
+                    // The clipping plane is initially positioned at the tileset's root transform.
+                    // Apply an additional matrix to center the clipping plane on the bounding sphere center.
+                    var transformCenter = Cesium.Matrix4.getTranslation(tileset.root.transform, new Cesium
+                        .Cartesian3());
+                    var transformCartographic = Cesium.Cartographic.fromCartesian(transformCenter);
+                    var boundingSphereCartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere
+                        .center);
+                    var height = boundingSphereCartographic.height - transformCartographic.height;
+                    clippingPlanes.modelMatrix = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0.0, 0.0,
+                        height));
+                }
+
+                for (var i = 0; i < clippingPlanes.length; ++i) {
+                    var plane = clippingPlanes.get(i);
+                    var planeEntity = viewer.entities.add({
+                        position: boundingSphere.center,
+                        plane: {
+                            dimensions: new Cesium.Cartesian2(radius * 2.5, radius * 2.5),
+                            material: Cesium.Color.WHITE.withAlpha(0.1),
+                            plane: new Cesium.CallbackProperty(createPlaneUpdateFunction(plane), false),
+                            outline: true,
+                            outlineColor: Cesium.Color.WHITE
+                        }
+                    });
+
+                    planeEntities.push(planeEntity);
+                }
+                return tileset;
+            }).otherwise(function (error) {
+                console.log(error);
+            });
+        }
+
         function loadModel(url) {
             clippingPlanes = new Cesium.ClippingPlaneCollection({
                 planes: [
@@ -136,7 +204,7 @@
                 }
             });
 
-            // viewer.trackedEntity = entity;
+            viewer.trackedEntity = entity;
 
             for (var i = 0; i < clippingPlanes.length; ++i) {
                 var plane = clippingPlanes.get(i);
@@ -155,20 +223,19 @@
             }
         }
 
+        function reset() {
+            api.viewer.entities.removeAll();
+            api.viewer.scene.primitives.remove(tileset);
+            planeEntities = [];
+            tileset = undefined;
+        }
+
+
         // Power Plant design model provided by Bentley Systems
         var modelUrl = '../../SampleData/models/Cesium_Air/Cesium_Air.glb';
-
-        loadModel(modelUrl);
-
-        api.camera.flyTo({
-            destination: new Cesium.Cartesian3(-2506003.797544674, -3847984.338205007, 4412139.901286835),
-            orientation: {
-                heading: 6.2726543559815635,
-                pitch: -0.13903701896561227,
-                roll: 0.0
-            }
-        });
-
+        var tilesetdUrl = '../../SampleData/models/Cesium3DTiles/Photogrammetry/tileset.json';
+        // loadModel(modelUrl);
+        loadTileset(tilesetdUrl);
 
         $(".nowrap input[type='checkbox']").click(function () {
             var isChecked = $(this).prop("checked");
@@ -176,6 +243,23 @@
                 case "Enable-edge-styling":
                     var edgeWidth = isChecked ? 1.0 : 0.0;
                     clippingPlanes.edgeWidth = edgeWidth;
+                    break;
+            }
+        });
+        $(".nowrap input[type='radio']").click(function () {
+            var isChecked = $(this).prop("checked");
+            switch ($(this).attr("id")) {
+                case "Cesium3DTileset":
+                    if (isChecked) {
+                        reset();
+                        loadTileset(tilesetdUrl);
+                    }
+                    break;
+                case "Model":
+                    if (isChecked) {
+                        reset();
+                        loadModel(modelUrl);
+                    }
                     break;
             }
         });

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - PrimitivePolyline 线</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <header id="header">
+        <h3 class="header-title">Primitive 之 PrimitivePolyline 线</h3>
+        <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
+        <!-- <div class="header-info header-info-r">更新日期：2020-03-10</div> -->
+        <div id='led_clock' class="header-info header-info-r">更新日期：2020-03-27</div>
+    </header>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>PrimitivePolyline 线</h2>
+        <br>
+        <br>
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+    </div>
+    <script src="../../js/js-led-clock.js"></script>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminifiedCustom/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/API.js"></script>
+    <script src="../../js/GLE_plugin_PrimitivePolyline.js"></script>
+    <script>
+        new LEDClock("led_clock");
+
+        var api = new API("cesiumContainer", {});
+        $("#cesium-version").html(api.Version.getCesiumVersion());
+
+
+        //定义要显示的点坐标（经纬度）
+        var positions = [
+            116.39, 39.9, 0,
+            112.74427110822258, 42.527434706212375, 0,
+            104.19302641205732, 35.29709495874281, 0,
+            111.23848766612369, 23.991863371404783, 0,
+            120.40588166225707, 29.485488911536066, 0
+        ];
+
+        //定义要显示的点的颜色（4个元素定义一个点的颜色（红绿蓝透明度））
+        var colors = [
+            1.0, 0.0, 0.0, 1.0,
+            1.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 0.0, 1.0,
+            0.0, 1.0, 1.0, 1.0,
+            0.0, 0.0, 1.0, 1.0
+        ];
+        var primitivePolyline = new PrimitivePolyline(api.viewer);
+        var p = primitivePolyline.create({
+            isRadian: false, //是否是弧度制坐标，默认false角度制，true为弧度制
+            positions: positions, //3*n(经纬度高程 | 弧度制经纬度高程)
+            colors: colors, // 3*1(纯色) or 3*n(不透明渐变色) or 4*n(带透明的渐变色)
+            isClosed: true, //是否闭合，默认不闭合
+        });
+
+        // var handler = new Cesium.ScreenSpaceEventHandler(api.viewer.canvas);
+        // handler.setInputAction(function (movement) {
+        //     var mousePosition = Cesium.Cartesian2.clone(movement.position);
+        //     var c2 = cartesian2ToCartesian3(mousePosition);
+        //     var temp = cartesian3ToWgs84(c2);
+        //     var position = new Cesium.Cartesian3(temp[0], temp[1], temp[2]);
+        //     console.log(position);
+        // }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+        $(".nowrap input[type='checkbox']").click(function () {
+            var isChecked = $(this).prop("checked");
+            switch ($(this).attr("id")) {
+                // case "Enable-edge-styling":
+                //     var edgeWidth = isChecked ? 1.0 : 0.0;
+                //     clippingPlanes.edgeWidth = edgeWidth;
+                //     break;
+            }
+        });
+
+        var primitive = new Cesium.Primitive({
+            geometryInstances: new Cesium.GeometryInstance({
+                geometry: new Cesium.PolylineGeometry({
+                    positions: Cesium.Cartesian3.fromDegreesArray([
+                        96.56, 28.66,
+                        97.20, 45.00,
+                        121.94, 44.56
+                    ]), //坐标必须两个和两个以上
+                    width: 10.0, //线宽
+                    vertexFormat: Cesium.PolylineColorAppearance.VERTEX_FORMAT,
+                    // vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
+                }),
+                attributes: {
+                    color: Cesium.ColorGeometryInstanceAttribute.fromColor(Cesium.Color
+                        .RED), //color  必须设置 不然没有效果
+                }
+            }),
+            appearance: new Cesium.PolylineColorAppearance({
+                translucent: true
+            })
+            // appearance: new Cesium.PolylineMaterialAppearance({
+            //     material: Cesium.Material.fromType('Color')
+            // })
+        });
+        api.scene.primitives.add(primitive);
+    </script>
+</body>
+
+</html>

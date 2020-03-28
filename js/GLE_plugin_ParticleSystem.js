@@ -6,7 +6,7 @@
  * @version v1.0.0
  * @param {Cesium.Viewer} Cesium
  */
-GLEParticleSystem = (function (Cesium) {
+var GLEParticleSystem = (function (Cesium) {
     var _viewer, _scene, _canvas, _camera;
 
     var particleSystems = {};
