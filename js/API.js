@@ -16,9 +16,9 @@ var API = function (divId, options) {
         geocoder: false, //右上角搜索 
         sceneModePicker: false, //2d/3d切换     
         homeButton: false, //home键，点击回到默认视角
-        infoBox: false, //点击模型不显示cesium自带的信息框
-        // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮 
-        selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框            
+        infoBox: false, //点击模型不显示cesium自带的信息框        
+        selectionIndicator: false, //点击模型不显示cesium自带的绿色选中框   
+        // scene3DOnly:false,//仅仅显示3d,可隐藏右上角2d和3d按钮          
         timeline: false, //最下面时间轴            
         navigationHelpButton: false, //右上角帮助按钮 
         navigationInstructionsInitiallyVisibl: false,

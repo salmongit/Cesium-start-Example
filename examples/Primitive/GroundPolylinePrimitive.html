@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cesium 入门示例 - GroundPolylinePrimitive</title>
+    <style>
+        @import url(../../libs/cesium/Build/CesiumUnminified/Widgets/widgets.css);
+        @import url(../../css/index.css);
+    </style>
+</head>
+
+<body>
+    <div id="cesiumContainer" style="height: 100%;"></div>
+    <!-- Some input elements for our app. -->
+    <header id="header">
+        <h3 class="header-title">Primitive 之 GroundPolylinePrimitive</h3>
+        <!-- <div class="header-info header-info-l">数据来源：互联网</div> -->
+        <!-- <div class="header-info header-info-r">更新日期：2020-03-10</div> -->
+        <div id='led_clock' class="header-info header-info-r">更新日期：2020-03-27</div>
+    </header>
+
+    <footer id="footer"><a href="https://github.com/Sogrey/Cesium-start-Example" target="_blank">@Sogrey</a> 2020
+    </footer>
+    <div class="backdrop" id="menu">
+        <div class="scrollbar"></div>
+        <h2>GroundPolylinePrimitive</h2>
+        <br>
+        <br>
+        <div class="nowrap">
+            Cesium版本：<label id="cesium-version"></label>
+        </div>
+    </div>
+    <script src="../../js/js-led-clock.js"></script>
+    <script src="../../js/jquery/3.4.1/jquery-3.4.1.min.js"></script>
+    <script src="../../libs/cesium/Build/CesiumUnminifiedCustom/Cesium.js"></script>
+    <script src="../../js/navigation.js"></script>
+    <script src="../../js/coordinate-transformation.js"></script>
+    <script src="../../js/API.js"></script>
+    <script>
+        new LEDClock("led_clock");
+
+        var api = new API("cesiumContainer", {
+            infoBox: true, //点击模型不显示cesium自带的信息框        
+            selectionIndicator: true, //点击模型不显示cesium自带的绿色选中框   
+            // terrainProvider: Cesium.createWorldTerrain()
+        });
+        $("#cesium-version").html(api.Version.getCesiumVersion());
+
+        var viewer = api.viewer;
+        var scene = viewer.scene;
+
+        if (!Cesium.GroundPolylinePrimitive.isSupported(scene)) {
+            window.alert('Polylines on terrain are not supported on this platform.');
+        }
+
+        // // Polyline Glow
+        // scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
+        //     geometryInstances: new Cesium.GeometryInstance({
+        //         geometry: new Cesium.GroundPolylineGeometry({
+        //             positions: Cesium.Cartesian3.fromDegreesArray([
+        //                 -122.2558, 46.1955,
+        //                 -122.1058, 46.1955
+        //             ]),
+        //             width: 10.0
+        //         })
+        //     }),
+        //     appearance: new Cesium.PolylineMaterialAppearance({
+        //         material: Cesium.Material.fromType(Cesium.Material.PolylineGlowType)
+        //     })
+        // }));
+
+        // // Polyline Dash
+        // scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
+        //     geometryInstances: new Cesium.GeometryInstance({
+        //         geometry: new Cesium.GroundPolylineGeometry({
+        //             positions: Cesium.Cartesian3.fromDegreesArray([
+        //                 -122.2558, 46.1975,
+        //                 -122.1058, 46.1975
+        //             ]),
+        //             width: 10.0
+        //         })
+        //     }),
+        //     appearance: new Cesium.PolylineMaterialAppearance({
+        //         material: Cesium.Material.fromType(Cesium.Material.PolylineDashType)
+        //     })
+        // }));
+
+        // Polyline Outline
+        scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
+            geometryInstances: new Cesium.GeometryInstance({
+                geometry: new Cesium.GroundPolylineGeometry({
+                    positions: Cesium.Cartesian3.fromDegreesArray([
+                        -122.2558, 46.1995,
+                        -122.1058, 46.1995,
+                        -122.1058, 46.1984,
+                    ]),
+                    width: 10.0,
+                    vertexFormat: Cesium.PolylineMaterialAppearance.VERTEX_FORMAT
+                })
+            }),
+            appearance: new Cesium.PolylineMaterialAppearance({
+                material: new Cesium.Material({
+                    translucent: true,
+                    fabric: {
+                        type: 'PolylineDash',
+                        uniforms: {
+                            color: new Cesium.Color(1.0, 1.0, 0.0, 0.5),
+                            outlineColor: new Cesium.Color(0.0, 0.0, 0.0, 0.5),
+                            outlineWidth: 2.0,
+                            gapColor: new Cesium.Color(1.0, 0.0, 0.0, 0.5),
+                            dashLength: 10,
+                            dashPattern: 255
+                        }
+                    }
+                })
+            })
+        }));
+
+        var pinBuilder = new Cesium.PinBuilder();
+        var billboards = scene.primitives.add(new Cesium.BillboardCollection());
+        billboards.add({
+            position: Cesium.Cartesian3.fromDegrees(-122.2558, 46.1995),
+            image: pinBuilder.fromText('起点', Cesium.Color.BLUE, 48).toDataURL(),
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+            horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+            show: true,
+            // pixelOffset: Cesium.Cartesian2.ZERO,
+            // eyeOffset: Cesium.Cartesian3.ZERO,
+            heightReference: Cesium.HeightReference.NONE,
+            scale: 1.0,
+            // image: 'url/to/image',
+            // imageSubRegion: undefined,
+            // color: Cesium.Color.GREEN,
+            id: undefined,
+            rotation: 0.0,
+            // alignedAxis: Cesium.Cartesian3.ZERO,
+            // width: undefined,
+            // height: undefined,
+            scaleByDistance: undefined,
+            translucencyByDistance: new Cesium.NearFarScalar(20000.0, 0.0, 30000.0, 0.0),
+            pixelOffsetScaleByDistance: undefined,
+            sizeInMeters: false,
+            distanceDisplayCondition: new Cesium.NearFarScalar(0.0, 0.0, 30000.0, 0.0),
+        });
+//更换贴图
+        // // create a billboard image dynamically
+        // function drawImage(id) {
+        //     // create and draw an image using a canvas
+        //     var canvas = document.createElement('canvas');
+        //     var context2D = canvas.getContext('2d');
+        //     // ... draw image
+        //     return canvas;
+        // }
+        // // drawImage will be called to create the texture
+        // b.setImage('myImage', drawImage);
+
+        billboards.add({
+            position: Cesium.Cartesian3.fromDegrees(-122.1058, 46.1984),
+            image: pinBuilder.fromText('终点', Cesium.Color.RED, 48).toDataURL(),
+            verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+        });
+
+        viewer.camera.lookAt(
+            Cesium.Cartesian3.fromDegrees(-122.2058, 46.1955, 1000.0),
+            new Cesium.Cartesian3(5000.0, 5000.0, 5000.0)
+        );
+        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    </script>
+</body>
+
+</html>
