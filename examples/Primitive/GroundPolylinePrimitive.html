@@ -56,37 +56,37 @@
             window.alert('Polylines on terrain are not supported on this platform.');
         }
 
-        // // Polyline Glow
-        // scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
-        //     geometryInstances: new Cesium.GeometryInstance({
-        //         geometry: new Cesium.GroundPolylineGeometry({
-        //             positions: Cesium.Cartesian3.fromDegreesArray([
-        //                 -122.2558, 46.1955,
-        //                 -122.1058, 46.1955
-        //             ]),
-        //             width: 10.0
-        //         })
-        //     }),
-        //     appearance: new Cesium.PolylineMaterialAppearance({
-        //         material: Cesium.Material.fromType(Cesium.Material.PolylineGlowType)
-        //     })
-        // }));
+        // Polyline Glow
+        scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
+            geometryInstances: new Cesium.GeometryInstance({
+                geometry: new Cesium.GroundPolylineGeometry({
+                    positions: Cesium.Cartesian3.fromDegreesArray([
+                        -122.2558, 46.1955,
+                        -122.1058, 46.1955
+                    ]),
+                    width: 10.0
+                })
+            }),
+            appearance: new Cesium.PolylineMaterialAppearance({
+                material: Cesium.Material.fromType(Cesium.Material.PolylineGlowType)
+            })
+        }));
 
-        // // Polyline Dash
-        // scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
-        //     geometryInstances: new Cesium.GeometryInstance({
-        //         geometry: new Cesium.GroundPolylineGeometry({
-        //             positions: Cesium.Cartesian3.fromDegreesArray([
-        //                 -122.2558, 46.1975,
-        //                 -122.1058, 46.1975
-        //             ]),
-        //             width: 10.0
-        //         })
-        //     }),
-        //     appearance: new Cesium.PolylineMaterialAppearance({
-        //         material: Cesium.Material.fromType(Cesium.Material.PolylineDashType)
-        //     })
-        // }));
+        // Polyline Dash
+        scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
+            geometryInstances: new Cesium.GeometryInstance({
+                geometry: new Cesium.GroundPolylineGeometry({
+                    positions: Cesium.Cartesian3.fromDegreesArray([
+                        -122.2558, 46.1975,
+                        -122.1058, 46.1975
+                    ]),
+                    width: 10.0
+                })
+            }),
+            appearance: new Cesium.PolylineMaterialAppearance({
+                material: Cesium.Material.fromType(Cesium.Material.PolylineDashType)
+            })
+        }));
 
         // Polyline Outline
         scene.groundPrimitives.add(new Cesium.GroundPolylinePrimitive({
@@ -121,7 +121,7 @@
 
         var pinBuilder = new Cesium.PinBuilder();
         var billboards = scene.primitives.add(new Cesium.BillboardCollection());
-        billboards.add({
+        var b = billboards.add({
             position: Cesium.Cartesian3.fromDegrees(-122.2558, 46.1995),
             image: pinBuilder.fromText('起点', Cesium.Color.BLUE, 48).toDataURL(),
             verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
@@ -140,12 +140,12 @@
             // width: undefined,
             // height: undefined,
             scaleByDistance: undefined,
-            translucencyByDistance: new Cesium.NearFarScalar(20000.0, 0.0, 30000.0, 0.0),
+            translucencyByDistance: undefined,
             pixelOffsetScaleByDistance: undefined,
             sizeInMeters: false,
             distanceDisplayCondition: new Cesium.NearFarScalar(0.0, 0.0, 30000.0, 0.0),
         });
-//更换贴图
+        //更换贴图
         // // create a billboard image dynamically
         // function drawImage(id) {
         //     // create and draw an image using a canvas
@@ -164,8 +164,8 @@
         });
 
         viewer.camera.lookAt(
-            Cesium.Cartesian3.fromDegrees(-122.2058, 46.1955, 1000.0),
-            new Cesium.Cartesian3(5000.0, 5000.0, 5000.0)
+            Cesium.Cartesian3.fromDegrees(-122.19, 46.23, 2000.0),
+            new Cesium.Cartesian3(10000.0, 10000.0, 10000.0)
         );
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     </script>
